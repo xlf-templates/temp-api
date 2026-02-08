@@ -1,0 +1,7 @@
+{
+  "esm": false,
+  "experimentalSpecifierResolution": "node",
+  "require": [
+    "tsconfig-paths/register"
+  ]
+}
