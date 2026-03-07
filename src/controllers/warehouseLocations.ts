@@ -1,5 +1,5 @@
 import { Request, Response } from 'express'
-import { WarehouseLocation, Warehouse, WarehouseArea } from '@/models'
+import { WarehouseLocation, Warehouse, WarehouseLocationType } from '@/models'
 import { ok, fail } from '@/utils/response'
 import { Op } from 'sequelize'
 
@@ -19,12 +19,12 @@ export const listWarehouseLocations = async (req: Request, res: Response) => {
       limit: pageSize,
       offset,
       order: [
-        ['sortOrder', 'DESC'],
+        ['sort', 'DESC'],
         ['id', 'ASC'],
       ],
       include: [
         { model: Warehouse, as: 'warehouse' },
-        { model: WarehouseArea, as: 'area' },
+        { model: WarehouseLocationType, as: 'type' },
       ],
     })
     return ok(res, '获取库位列表成功', {

@@ -91,12 +91,6 @@ export const defineAssociations = () => {
 
   Goods.hasMany(GoodsImage, { foreignKey: 'goodsId', as: 'images' })
   GoodsImage.belongsTo(Goods, { foreignKey: 'goodsId', as: 'goods' })
-
-  Warehouse.hasMany(WarehouseArea, { foreignKey: 'warehouseId', as: 'areas' })
-  WarehouseArea.belongsTo(Warehouse, {
-    foreignKey: 'warehouseId',
-    as: 'warehouse',
-  })
   Warehouse.hasMany(WarehouseLocation, {
     foreignKey: 'warehouseId',
     as: 'locations',
@@ -105,14 +99,18 @@ export const defineAssociations = () => {
     foreignKey: 'warehouseId',
     as: 'warehouse',
   })
-  WarehouseArea.hasMany(WarehouseLocation, {
-    foreignKey: 'areaId',
+
+  WarehouseLocation.belongsTo(WarehouseLocationType, {
+    foreignKey: 'locationType',
+    as: 'type',
+  })
+  WarehouseLocationType.hasMany(WarehouseLocation, {
+    foreignKey: 'locationType',
     as: 'locations',
   })
-  WarehouseLocation.belongsTo(WarehouseArea, {
-    foreignKey: 'areaId',
-    as: 'area',
-  })
+
+  Warehouse.belongsTo(Area, { foreignKey: 'state', as: 'stateInfo' })
+  Warehouse.belongsTo(Area, { foreignKey: 'city', as: 'cityInfo' })
 
   Area.hasMany(Area, { foreignKey: 'parentId', as: 'children' })
   Area.belongsTo(Area, { foreignKey: 'parentId', as: 'parent' })

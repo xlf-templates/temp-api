@@ -10,14 +10,19 @@ export const listWarehouseAreas = async (req: Request, res: Response) => {
     const offset = (page - 1) * pageSize
     const where: any = {}
     if (req.query.warehouseId) where.warehouseId = Number(req.query.warehouseId)
-    if (req.query.areaCode) where.areaCode = { [Op.like]: `%${req.query.areaCode}%` }
-    if (req.query.areaName) where.areaName = { [Op.like]: `%${req.query.areaName}%` }
+    if (req.query.areaCode)
+      where.areaCode = { [Op.like]: `%${req.query.areaCode}%` }
+    if (req.query.areaName)
+      where.areaName = { [Op.like]: `%${req.query.areaName}%` }
     if (req.query.status) where.status = Number(req.query.status)
     const result = await WarehouseArea.findAndCountAll({
       where,
       limit: pageSize,
       offset,
-      order: [['sortOrder', 'DESC'], ['id', 'ASC']],
+      order: [
+        ['sort', 'DESC'],
+        ['id', 'ASC'],
+      ],
       include: [{ model: Warehouse, as: 'warehouse' }],
     })
     return ok(res, '获取库区列表成功', {
@@ -34,7 +39,9 @@ export const listWarehouseAreas = async (req: Request, res: Response) => {
 export const getWarehouseArea = async (req: Request, res: Response) => {
   try {
     const id = Number(req.params.id)
-    const item = await WarehouseArea.findByPk(id, { include: [{ model: Warehouse, as: 'warehouse' }] })
+    const item = await WarehouseArea.findByPk(id, {
+      include: [{ model: Warehouse, as: 'warehouse' }],
+    })
     if (!item) return fail(res, '库区不存在', 404)
     return ok(res, '获取库区成功', item)
   } catch (error: any) {
@@ -69,16 +76,22 @@ export const updateWarehouseArea = async (req: Request, res: Response) => {
   }
 }
 
-export const deleteWarehouseArea = async (req: Request, res: Response): Promise<void> => {
+export const deleteWarehouseArea = async (
+  req: Request,
+  res: Response,
+): Promise<void> => {
   try {
     let ids: number[]
     if (req.params.id) ids = [Number(req.params.id)]
-    else if (req.query.ids && Array.isArray(req.query.ids)) ids = req.query.ids.map((id: any) => Number(id))
+    else if (req.query.ids && Array.isArray(req.query.ids))
+      ids = req.query.ids.map((id: any) => Number(id))
     else {
       res.status(400).json({ success: false, message: '缺少有效的 id 或 ids' })
       return
     }
-    const count = await WarehouseArea.destroy({ where: { id: { [Op.in]: ids } } })
+    const count = await WarehouseArea.destroy({
+      where: { id: { [Op.in]: ids } },
+    })
     if (!count) {
       res.status(404).json({ success: false, message: '库区不存在' })
       return

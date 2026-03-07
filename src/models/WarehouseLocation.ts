@@ -12,7 +12,7 @@ export interface WarehouseLocationAttributes {
   locationType?: number
   maxWeight?: number | null
   maxVolume?: number | null
-  sortOrder?: number
+  sort?: number
   status?: number
   isDeleted?: number
   createdAt?: Date
@@ -31,7 +31,7 @@ export interface WarehouseLocationCreationAttributes extends Optional<
   | 'locationType'
   | 'maxWeight'
   | 'maxVolume'
-  | 'sortOrder'
+  | 'sort'
   | 'status'
   | 'isDeleted'
   | 'createdAt'
@@ -58,7 +58,7 @@ export class WarehouseLocation
   public locationType?: number
   public maxWeight?: number | null
   public maxVolume?: number | null
-  public sortOrder?: number
+  public sort?: number
   public status?: number
   public isDeleted?: number
   public createdAt?: Date
@@ -71,32 +71,73 @@ export class WarehouseLocation
 WarehouseLocation.init(
   {
     id: { type: DataTypes.BIGINT, primaryKey: true, autoIncrement: true },
-    warehouseId: { type: DataTypes.BIGINT, allowNull: false },
-    locationCode: { type: DataTypes.STRING(50), allowNull: false },
-    name: { type: DataTypes.STRING(100), allowNull: false },
-    shelfNo: { type: DataTypes.STRING(50), allowNull: true },
-    layerNo: { type: DataTypes.STRING(20), allowNull: true },
-    positionNo: { type: DataTypes.STRING(20), allowNull: true },
+    warehouseId: {
+      type: DataTypes.BIGINT,
+      allowNull: false,
+      comment: '仓库ID',
+    },
+
+    locationCode: {
+      type: DataTypes.STRING(50),
+      allowNull: false,
+      comment: '位置编码',
+    },
+    name: {
+      type: DataTypes.STRING(100),
+      allowNull: false,
+      comment: '位置名称',
+    },
+    shelfNo: { type: DataTypes.STRING(50), allowNull: true, comment: '货架号' },
+    layerNo: { type: DataTypes.STRING(20), allowNull: true, comment: '层号' },
+    positionNo: {
+      type: DataTypes.STRING(20),
+      allowNull: true,
+      comment: '位置号',
+    },
     locationType: {
       type: DataTypes.TINYINT,
       allowNull: false,
       defaultValue: 1,
+      comment: '位置类型',
     },
-    maxWeight: { type: DataTypes.DECIMAL(10, 2), allowNull: true },
-    maxVolume: { type: DataTypes.DECIMAL(10, 3), allowNull: true },
-    sortOrder: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 0 },
-    status: { type: DataTypes.TINYINT, allowNull: false, defaultValue: 1 },
-    isDeleted: { type: DataTypes.TINYINT, allowNull: false, defaultValue: 0 },
-    createdBy: { type: DataTypes.BIGINT, allowNull: true },
-    updatedBy: { type: DataTypes.BIGINT, allowNull: true },
-    remark: { type: DataTypes.TEXT, allowNull: true },
+    maxWeight: {
+      type: DataTypes.DECIMAL(10, 2),
+      allowNull: true,
+      comment: '最大重量',
+    },
+    maxVolume: {
+      type: DataTypes.DECIMAL(10, 3),
+      allowNull: true,
+      comment: '最大体积',
+    },
+    sort: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      defaultValue: 0,
+      comment: '排序',
+    },
+    status: {
+      type: DataTypes.TINYINT,
+      allowNull: false,
+      defaultValue: 1,
+      comment: '状态',
+    },
+    isDeleted: {
+      type: DataTypes.TINYINT,
+      allowNull: false,
+      defaultValue: 0,
+      comment: '是否删除',
+    },
+    createdBy: { type: DataTypes.BIGINT, allowNull: true, comment: '创建人' },
+    updatedBy: { type: DataTypes.BIGINT, allowNull: true, comment: '更新人' },
+    remark: { type: DataTypes.TEXT, allowNull: true, comment: '备注' },
+    
   },
   {
     sequelize,
     tableName: 'warehouse_location',
     indexes: [
       { name: 'idx_warehouse_id', fields: ['warehouse_id'] },
-      { name: 'idx_area_id', fields: ['area_id'] },
       {
         name: 'uk_location_code',
         unique: true,

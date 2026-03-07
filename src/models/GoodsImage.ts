@@ -44,6 +44,7 @@ GoodsImage.init(
     goodsId: {
       type: DataTypes.INTEGER,
       allowNull: false,
+      comment: '商品ID',
     },
     url: {
       type: DataTypes.STRING(255),
@@ -52,6 +53,7 @@ GoodsImage.init(
         notEmpty: true,
         len: [1, 255],
       },
+      comment: '图片URL',
     },
     isMain: {
       type: DataTypes.TINYINT,
@@ -60,15 +62,18 @@ GoodsImage.init(
       validate: {
         isIn: [[0, 1]],
       },
+      comment: '是否主图',
     },
     sort: {
       type: DataTypes.INTEGER,
       allowNull: false,
       defaultValue: 0,
+      comment: '排序',
     },
     remark: {
       type: DataTypes.TEXT,
       allowNull: true,
+      comment: '备注',
     },
   },
   {

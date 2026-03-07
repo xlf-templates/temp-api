@@ -1,5 +1,5 @@
 import { Request, Response } from 'express'
-import { Warehouse, WarehouseArea, WarehouseLocation } from '@/models'
+import { Warehouse, WarehouseArea, WarehouseLocation, Area } from '@/models'
 import { ok, fail } from '@/utils/response'
 import { Op } from 'sequelize'
 
@@ -18,8 +18,12 @@ export const listWarehouses = async (req: Request, res: Response) => {
       limit: pageSize,
       offset,
       order: [
-        ['sortOrder', 'DESC'],
+        ['sort', 'DESC'],
         ['id', 'ASC'],
+      ],
+      include: [
+        { model: Area, as: 'stateInfo' },
+        { model: Area, as: 'cityInfo' },
       ],
     })
     return ok(res, '获取仓库列表成功', {
@@ -54,8 +58,10 @@ export const createWarehouse = async (req: Request, res: Response) => {
     const next: any = { ...req.body }
     if (next.warehouseCode)
       next.warehouseCode = String(next.warehouseCode).trim()
-    if (next.warehouseName)
-      next.warehouseName = String(next.warehouseName).trim()
+    if (next.name) next.name = String(next.name).trim()
+    if (next.state) next.state = Number(next.state)
+    if (next.city) next.city = Number(next.city)
+    if (next.district) next.district = String(next.district).trim()
     const item = await Warehouse.create(next)
     return ok(res, '创建仓库成功', item, 201)
   } catch (error: any) {
@@ -71,8 +77,10 @@ export const updateWarehouse = async (req: Request, res: Response) => {
     const next: any = { ...req.body }
     if (next.warehouseCode)
       next.warehouseCode = String(next.warehouseCode).trim()
-    if (next.warehouseName)
-      next.warehouseName = String(next.warehouseName).trim()
+    if (next.name) next.name = String(next.name).trim()
+    if (next.state) next.state = Number(next.state)
+    if (next.city) next.city = Number(next.city)
+    if (next.district) next.district = String(next.district).trim()
     await item.update(next)
     return ok(res, '更新仓库成功', item)
   } catch (error: any) {

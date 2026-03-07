@@ -6,15 +6,15 @@ export interface WarehouseAttributes {
   warehouseCode: string
   name: string
   warehouseType?: number | null
-  state?: string | null
-  city?: string | null
+  state?: number | null
+  city?: number | null
   district?: string | null
   address?: string | null
   contactPerson?: string | null
   contactPhone?: string | null
   area?: number | null
   managerId?: number | null
-  sortOrder?: number
+  sort?: number
   status?: number
   isDeleted?: number
   createdAt?: Date
@@ -36,7 +36,7 @@ export interface WarehouseCreationAttributes extends Optional<
   | 'contactPhone'
   | 'area'
   | 'managerId'
-  | 'sortOrder'
+  | 'sort'
   | 'status'
   | 'isDeleted'
   | 'createdAt'
@@ -54,15 +54,15 @@ export class Warehouse
   public warehouseCode!: string
   public name!: string
   public warehouseType?: number | null
-  public state?: string | null
-  public city?: string | null
+  public state?: number | null
+  public city?: number | null
   public district?: string | null
   public address?: string | null
   public contactPerson?: string | null
   public contactPhone?: string | null
   public area?: number | null
   public managerId?: number | null
-  public sortOrder?: number
+  public sort?: number
   public status?: number
   public isDeleted?: number
   public createdAt?: Date
@@ -89,21 +89,72 @@ Warehouse.init(
       allowNull: false,
       validate: { notEmpty: true },
     },
-    warehouseType: { type: DataTypes.TINYINT, allowNull: true },
-    state: { type: DataTypes.STRING(50), allowNull: true },
-    city: { type: DataTypes.STRING(50), allowNull: true },
-    district: { type: DataTypes.STRING(50), allowNull: true },
-    address: { type: DataTypes.STRING(255), allowNull: true },
-    contactPerson: { type: DataTypes.STRING(50), allowNull: true },
-    contactPhone: { type: DataTypes.STRING(20), allowNull: true },
-    area: { type: DataTypes.DECIMAL(10, 2), allowNull: true },
-    managerId: { type: DataTypes.BIGINT, allowNull: true },
-    sortOrder: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 0 },
-    status: { type: DataTypes.TINYINT, allowNull: false, defaultValue: 1 },
-    isDeleted: { type: DataTypes.TINYINT, allowNull: false, defaultValue: 0 },
-    createdBy: { type: DataTypes.BIGINT, allowNull: true },
-    updatedBy: { type: DataTypes.BIGINT, allowNull: true },
-    remark: { type: DataTypes.TEXT, allowNull: true },
+    warehouseType: {
+      type: DataTypes.TINYINT,
+      allowNull: true,
+      comment: '仓库类型',
+    },
+    state: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      references: {
+        model: 'area',
+        key: 'id',
+      },
+      onUpdate: 'CASCADE',
+      onDelete: 'SET NULL',
+      comment: '州',
+    },
+    city: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      references: {
+        model: 'area',
+        key: 'id',
+      },
+      onUpdate: 'CASCADE',
+      onDelete: 'SET NULL',
+      comment: '市',
+    },
+    district: { type: DataTypes.STRING(50), allowNull: true, comment: '区县' },
+    address: {
+      type: DataTypes.STRING(255),
+      allowNull: true,
+      comment: '详细地址',
+    },
+    contactPerson: {
+      type: DataTypes.STRING(50),
+      allowNull: true,
+      comment: '联系人',
+    },
+    contactPhone: {
+      type: DataTypes.STRING(20),
+      allowNull: true,
+      comment: '联系电话',
+    },
+    area: { type: DataTypes.DECIMAL(10, 2), allowNull: true, comment: '面积' },
+    managerId: { type: DataTypes.BIGINT, allowNull: true, comment: '负责人' },
+    sort: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      defaultValue: 0,
+      comment: '排序',
+    },
+    status: {
+      type: DataTypes.TINYINT,
+      allowNull: false,
+      defaultValue: 1,
+      comment: '状态',
+    },
+    isDeleted: {
+      type: DataTypes.TINYINT,
+      allowNull: false,
+      defaultValue: 0,
+      comment: '是否删除',
+    },
+    createdBy: { type: DataTypes.BIGINT, allowNull: true, comment: '创建人' },
+    updatedBy: { type: DataTypes.BIGINT, allowNull: true, comment: '更新人' },
+    remark: { type: DataTypes.TEXT, allowNull: true, comment: '备注' },
   },
   {
     sequelize,
