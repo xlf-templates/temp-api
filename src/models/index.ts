@@ -11,7 +11,6 @@ import Area from './Area'
 import Supplier from './Supplier'
 import GoodsImage from './GoodsImage'
 import Warehouse from './Warehouse'
-import WarehouseArea from './WarehouseArea'
 import WarehouseAreaType from './WarehouseAreaType'
 import WarehouseLocation from './WarehouseLocation'
 import WarehouseLocationType from './WarehouseLocationType'
@@ -30,7 +29,6 @@ export {
   Supplier,
   GoodsImage,
   Warehouse,
-  WarehouseArea,
   WarehouseLocation,
   WarehouseAreaType,
   WarehouseLocationType,
@@ -109,6 +107,15 @@ export const defineAssociations = () => {
     as: 'locations',
   })
 
+  WarehouseLocation.belongsTo(WarehouseAreaType, {
+    foreignKey: 'areaTypeId',
+    as: 'areaType',
+  })
+  WarehouseAreaType.hasMany(WarehouseLocation, {
+    foreignKey: 'areaTypeId',
+    as: 'locations',
+  })
+
   Warehouse.belongsTo(Area, { foreignKey: 'state', as: 'stateInfo' })
   Warehouse.belongsTo(Area, { foreignKey: 'city', as: 'cityInfo' })
 
@@ -140,8 +147,9 @@ export const initModels = () => {
     Supplier,
     GoodsImage,
     Warehouse,
-    WarehouseArea,
     WarehouseLocation,
+    WarehouseAreaType,
+    WarehouseType,
   }
 }
 
@@ -159,7 +167,6 @@ export default {
   Supplier,
   GoodsImage,
   Warehouse,
-  WarehouseArea,
   WarehouseLocation,
   initModels,
   defineAssociations,

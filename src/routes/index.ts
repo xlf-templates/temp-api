@@ -11,7 +11,6 @@ import weightUnitsRoutes from './weightUnits'
 import areasRoutes from './areas'
 import suppliersRoutes from './suppliers'
 import warehousesRoutes from './warehouses'
-import warehouseAreasRoutes from './warehouseAreas'
 import warehouseLocationsRoutes from './warehouseLocations'
 import warehouseTypesRoutes from './warehouseType'
 import warehouseAreaTypesRoutes from './warehouseAreaType'
@@ -117,7 +116,6 @@ router.use('/weight-units', weightUnitsRoutes)
 router.use('/areas', areasRoutes)
 router.use('/suppliers', suppliersRoutes)
 router.use('/warehouses', warehousesRoutes)
-router.use('/warehouse-areas', warehouseAreasRoutes)
 router.use('/warehouse-locations', warehouseLocationsRoutes)
 router.use('/warehouse-types', warehouseTypesRoutes)
 router.use('/warehouse-area-types', warehouseAreaTypesRoutes)

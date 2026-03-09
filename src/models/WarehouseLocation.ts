@@ -4,6 +4,7 @@ import sequelize from '@/config/database'
 export interface WarehouseLocationAttributes {
   id: number
   warehouseId: number
+  areaTypeId?: number
   locationCode: string
   name: string
   shelfNo?: string | null
@@ -50,6 +51,7 @@ export class WarehouseLocation
 {
   public id!: number
   public warehouseId!: number
+  public areaTypeId?: number
   public locationCode!: string
   public name!: string
   public shelfNo?: string | null
@@ -72,11 +74,16 @@ WarehouseLocation.init(
   {
     id: { type: DataTypes.BIGINT, primaryKey: true, autoIncrement: true },
     warehouseId: {
-      type: DataTypes.BIGINT,
+      type: DataTypes.INTEGER,
       allowNull: false,
       comment: '仓库ID',
     },
-
+    areaTypeId: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      defaultValue:1,
+      comment: '仓区类型',
+    },
     locationCode: {
       type: DataTypes.STRING(50),
       allowNull: false,
@@ -95,7 +102,7 @@ WarehouseLocation.init(
       comment: '位置号',
     },
     locationType: {
-      type: DataTypes.TINYINT,
+      type: DataTypes.INTEGER,
       allowNull: false,
       defaultValue: 1,
       comment: '位置类型',

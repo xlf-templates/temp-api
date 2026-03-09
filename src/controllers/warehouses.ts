@@ -1,5 +1,5 @@
 import { Request, Response } from 'express'
-import { Warehouse, WarehouseArea, WarehouseLocation, Area } from '@/models'
+import { Warehouse, WarehouseLocation, Area } from '@/models'
 import { ok, fail } from '@/utils/response'
 import { Op } from 'sequelize'
 
