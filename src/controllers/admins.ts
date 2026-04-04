@@ -1,5 +1,5 @@
 import { Request, Response } from 'express'
-import { Admin, AdminGroup, AdminLog } from '@/models'
+import { Admin, AdminGroup, AdminLog, Department } from '@/models'
 import { Op } from 'sequelize'
 import { signToken, generateNodePassword } from '@/utils/jwt'
 import { ok, fail } from '@/utils/response'
@@ -16,7 +16,14 @@ export const listAdmins = async (req: Request, res: Response) => {
       limit: pageSize,
       offset,
       order: [['id', 'DESC']],
-      include: [{ model: AdminGroup, as: 'group' }],
+      include: [
+        { model: AdminGroup, as: 'group' },
+        {
+          model: Department,
+          as: 'department',
+          attributes: ['id', 'name', 'enName'],
+        },
+      ],
     })
 
     return ok(res, '获取管理员列表成功', {
@@ -40,6 +47,11 @@ export const getAdmin = async (req: Request, res: Response) => {
     const admin = await Admin.findByPk(id, {
       include: [
         { model: AdminGroup, as: 'group' },
+        {
+          model: Department,
+          as: 'department',
+          attributes: ['id', 'name', 'enName'],
+        },
         { model: AdminLog, as: 'logs', limit: 20, order: [['id', 'DESC']] },
       ],
     })
@@ -120,9 +132,11 @@ export const login = async (req: Request, res: Response) => {
     const admin = await Admin.findOne({
       where: { username },
     })
+    // 401 表示“未授权”，用于提示客户端提供的凭据无效，避免泄露账号是否存在
     if (!admin) return fail(res, '账号不存在', 401)
 
     const valid = await admin.validatePassword(password)
+    // 同样返回 401，防止攻击者通过状态码区分“账号不存在”还是“密码错误”
     if (!valid) return fail(res, '密码错误', 401)
 
     await admin.updateLastLogin()

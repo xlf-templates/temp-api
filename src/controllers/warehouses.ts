@@ -42,7 +42,7 @@ export const getWarehouse = async (req: Request, res: Response) => {
     const id = Number(req.params.id)
     const item = await Warehouse.findByPk(id, {
       include: [
-        { model: WarehouseArea, as: 'areas' },
+        // { model: WarehouseArea, as: 'areas' },
         { model: WarehouseLocation, as: 'locations' },
       ],
     })

@@ -11,10 +11,14 @@ import Area from './Area'
 import Supplier from './Supplier'
 import GoodsImage from './GoodsImage'
 import Warehouse from './Warehouse'
-import WarehouseAreaType from './WarehouseAreaType'
 import WarehouseLocation from './WarehouseLocation'
 import WarehouseLocationType from './WarehouseLocationType'
 import WarehouseType from './WarehouseType'
+import Zone from './Zone'
+import PurchaseOrder from './PurchaseOrder'
+import PurchaseOrderDetail from './PurchaseOrderDetail'
+import PaymentRecord from './PaymentRecord'
+import Department from './Department'
 
 export {
   Admin,
@@ -30,9 +34,13 @@ export {
   GoodsImage,
   Warehouse,
   WarehouseLocation,
-  WarehouseAreaType,
   WarehouseLocationType,
   WarehouseType,
+  Zone,
+  PurchaseOrder,
+  PurchaseOrderDetail,
+  PaymentRecord,
+  Department,
 }
 
 export const defineAssociations = () => {
@@ -41,6 +49,15 @@ export const defineAssociations = () => {
 
   Admin.belongsTo(AdminGroup, { foreignKey: 'groupId', as: 'group' })
   AdminGroup.hasMany(Admin, { foreignKey: 'groupId', as: 'admins' })
+
+  Admin.belongsTo(Department, { foreignKey: 'departmentId', as: 'department' })
+  Department.hasMany(Admin, { foreignKey: 'departmentId', as: 'admins' })
+
+  Department.hasMany(Department, { foreignKey: 'parentId', as: 'children' })
+  Department.belongsTo(Department, { foreignKey: 'parentId', as: 'parent' })
+
+  Department.belongsTo(Admin, { foreignKey: 'leaderId', as: 'leader' })
+  // Admin.hasMany(Department, { foreignKey: 'leaderId', as: 'ledDepartments' })
 
   AdminRules.hasMany(AdminRules, { foreignKey: 'parentId', as: 'children' })
   AdminRules.belongsTo(AdminRules, { foreignKey: 'parentId', as: 'parent' })
@@ -89,6 +106,34 @@ export const defineAssociations = () => {
 
   Goods.hasMany(GoodsImage, { foreignKey: 'goodsId', as: 'images' })
   GoodsImage.belongsTo(Goods, { foreignKey: 'goodsId', as: 'goods' })
+
+  Goods.belongsTo(Warehouse, {
+    foreignKey: 'warehouseId',
+    as: 'warehouse',
+  })
+  Warehouse.hasMany(Goods, {
+    foreignKey: 'warehouseId',
+    as: 'goods',
+  })
+
+  Goods.belongsTo(Zone, {
+    foreignKey: 'warehouseZoneId',
+    as: 'warehouseZone',
+  })
+  Zone.hasMany(Goods, {
+    foreignKey: 'warehouseZoneId',
+    as: 'goods',
+  })
+
+  // Goods.belongsTo(WarehouseLocation, {
+  //   foreignKey: 'warehouseLocationId',
+  //   as: 'warehouseLocation',
+  // })
+  // WarehouseLocation.hasMany(Goods, {
+  //   foreignKey: 'warehouseLocationId',
+  //   as: 'goods',
+  // })
+
   Warehouse.hasMany(WarehouseLocation, {
     foreignKey: 'warehouseId',
     as: 'locations',
@@ -107,12 +152,12 @@ export const defineAssociations = () => {
     as: 'locations',
   })
 
-  WarehouseLocation.belongsTo(WarehouseAreaType, {
-    foreignKey: 'areaTypeId',
-    as: 'areaType',
+  WarehouseLocation.belongsTo(Zone, {
+    foreignKey: 'zoneId',
+    as: 'zone',
   })
-  WarehouseAreaType.hasMany(WarehouseLocation, {
-    foreignKey: 'areaTypeId',
+  Zone.hasMany(WarehouseLocation, {
+    foreignKey: 'zoneId',
     as: 'locations',
   })
 
@@ -129,6 +174,45 @@ export const defineAssociations = () => {
     as: 'suppliersInProvince',
   })
   Area.hasMany(Supplier, { foreignKey: 'cityId', as: 'suppliersInCity' })
+
+  PurchaseOrder.belongsTo(Admin, { foreignKey: 'buyerId', as: 'buyer' })
+  Admin.hasMany(PurchaseOrder, { foreignKey: 'buyerId', as: 'purchaseOrders' })
+
+  PurchaseOrder.hasMany(PurchaseOrderDetail, {
+    foreignKey: 'orderId',
+    as: 'details',
+  })
+  PurchaseOrderDetail.belongsTo(PurchaseOrder, {
+    foreignKey: 'orderId',
+    as: 'order',
+  })
+
+  PurchaseOrderDetail.belongsTo(Goods, { foreignKey: 'goodsId', as: 'goods' })
+  Goods.hasMany(PurchaseOrderDetail, {
+    foreignKey: 'goodsId',
+    as: 'purchaseOrderDetails',
+  })
+
+  PurchaseOrderDetail.belongsTo(Supplier, {
+    foreignKey: 'supplierId',
+    as: 'supplier',
+  })
+  Supplier.hasMany(PurchaseOrderDetail, {
+    foreignKey: 'supplierId',
+    as: 'purchaseOrderDetails',
+  })
+
+  PaymentRecord.belongsTo(PurchaseOrder, { foreignKey: 'orderId', as: 'order' })
+  PurchaseOrder.hasMany(PaymentRecord, {
+    foreignKey: 'orderId',
+    as: 'payments',
+  })
+
+  PaymentRecord.belongsTo(Supplier, {
+    foreignKey: 'supplierId',
+    as: 'supplier',
+  })
+  Supplier.hasMany(PaymentRecord, { foreignKey: 'supplierId', as: 'payments' })
 }
 
 export const initModels = () => {
@@ -148,8 +232,12 @@ export const initModels = () => {
     GoodsImage,
     Warehouse,
     WarehouseLocation,
-    WarehouseAreaType,
     WarehouseType,
+    Zone,
+    PurchaseOrder,
+    PurchaseOrderDetail,
+    PaymentRecord,
+    Department,
   }
 }
 
@@ -168,6 +256,8 @@ export default {
   GoodsImage,
   Warehouse,
   WarehouseLocation,
+  Zone,
+  Department,
   initModels,
   defineAssociations,
 }

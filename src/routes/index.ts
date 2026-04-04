@@ -13,8 +13,13 @@ import suppliersRoutes from './suppliers'
 import warehousesRoutes from './warehouses'
 import warehouseLocationsRoutes from './warehouseLocations'
 import warehouseTypesRoutes from './warehouseType'
-import warehouseAreaTypesRoutes from './warehouseAreaType'
+import zonesRoutes from './zone'
 import warehouseLocationTypesRoutes from './warehouseLocationType'
+import uploadRoutes from './upload'
+import purchaseOrdersRoutes from './purchaseOrders'
+import purchaseOrderDetailsRoutes from './purchaseOrderDetails'
+import paymentRecordsRoutes from './paymentRecords'
+import departmentsRoutes from './departments'
 
 const router: Router = Router()
 
@@ -118,6 +123,11 @@ router.use('/suppliers', suppliersRoutes)
 router.use('/warehouses', warehousesRoutes)
 router.use('/warehouse-locations', warehouseLocationsRoutes)
 router.use('/warehouse-types', warehouseTypesRoutes)
-router.use('/warehouse-area-types', warehouseAreaTypesRoutes)
+router.use('/zones', zonesRoutes)
 router.use('/warehouse-location-types', warehouseLocationTypesRoutes)
+router.use('/upload', uploadRoutes)
+router.use('/purchase-orders', purchaseOrdersRoutes)
+router.use('/purchase-order-details', purchaseOrderDetailsRoutes)
+router.use('/payment-records', paymentRecordsRoutes)
+router.use('/departments', departmentsRoutes)
 export default router

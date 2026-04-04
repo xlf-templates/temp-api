@@ -9,22 +9,27 @@ export interface GoodsAttributes {
   enName: string | null
   manufacturer?: string | null //制造厂商
   warehouseId?: number | null //仓库ID
-  warehouseAreaId?: number | null //库区ID
-  warehouseLocationId?: number | null //库位ID
+  warehouseZoneId?: number | null //库区ID
+  // warehouseLocationId?: number | null //库位ID
   supplierIds?: string | null //供应商
   packagingUnit?: number | null //包装单位
+  packagingNumber?: number | null //包装数量
   packagingSpec?: string | null //包装规格
-  speceName?: string | null //规格名称
+  specName?: string | null //规格名称
+  inner_unit?: number | null //内包装单位
+  length?: number | null //长度
+  width?: number | null //宽度
+  height?: number | null //高度
   weightUnit?: number | null //重量单位
   minStock: number //最小库存
   maxStock: number //最大库存
   safetyStock: number //安全库存
-  palletSpec?: number //保质期
+  palletSpec?: number //栈板规格
   netWeight?: number //净重
   grossWeight?: number //毛重
-  warrantyPeriod?: number //栈板规格
+  shelfLife?: number //保质期
   warehouseDateWarning?: number //库龄预警
-  packagingNumber?: number //包装数量
+  status?: number //状态
   netPrice: number //来货净价
   extraFee?: number //运费杂费
   surcharge?: number //附加费
@@ -50,12 +55,16 @@ export interface GoodsCreationAttributes extends Optional<
   | 'enName'
   | 'manufacturer' //制造厂商
   | 'warehouseId' //仓库ID
-  | 'warehouseLocationId' //库位ID
-  | 'warehouseAreaId' //库区ID
+  // | 'warehouseLocationId' //库位ID
+  | 'warehouseZoneId' //库区ID
   | 'supplierIds'
   | 'packagingUnit' //包装单位
+  | 'inner_unit' //内包装单位
+  | 'length' //长度
+  | 'width' //宽度
+  | 'height' //高度
   | 'packagingSpec' //包装规格
-  | 'speceName' //规格名称
+  | 'specName' //规格名称
   | 'weightUnit' //重量单位
   | 'minStock' //最小库存
   | 'maxStock' //最大库存
@@ -63,7 +72,7 @@ export interface GoodsCreationAttributes extends Optional<
   | 'palletSpec' //保质期
   | 'netWeight' //净重
   | 'grossWeight' //毛重
-  | 'warrantyPeriod' //栈板规格
+  | 'shelfLife' //栈板规格
   | 'warehouseDateWarning' //库龄预警
   | 'packagingNumber' //包装数量
   | 'netPrice' //来货净价
@@ -78,6 +87,7 @@ export interface GoodsCreationAttributes extends Optional<
   | 'fourthPrice'
   | 'fifthPrice'
   | 'remark'
+  | 'status' //状态
   | 'createdAt'
   | 'updatedAt'
 > {}
@@ -93,12 +103,16 @@ export class Goods
   public enName!: string | null
   public manufacturer?: string | null //制造厂商
   public warehouseId?: number | null //仓库ID
-  public warehouseLocationId?: number | null //库位ID
-  public warehouseAreaId?: number | null //库区ID
+  // public warehouseLocationId?: number | null //库位ID
+  public warehouseZoneId?: number | null //库区ID
   public supplierIds?: string | null //供应商
   public packagingUnit?: number | null //包装单位
+  public inner_unit?: number | null //内包装单位
+  public length?: number | null //长度
+  public width?: number | null //宽度
+  public height?: number | null //高度
   public packagingSpec?: string | null //包装规格
-  public speceName?: string | null //规格名称
+  public specName?: string | null //规格名称
   public weightUnit?: number | null //重量单位
   public minStock!: number //最小库存
   public maxStock!: number //最大库存
@@ -106,7 +120,7 @@ export class Goods
   public palletSpec?: number //保质期
   public netWeight?: number //净重
   public grossWeight?: number //毛重
-  public warrantyPeriod?: number //栈板规格
+  public shelfLife?: number //栈板规格
   public warehouseDateWarning?: number //库龄预警
   public packagingNumber?: number //包装数量
   public netPrice!: number //来货净价
@@ -121,6 +135,7 @@ export class Goods
   public fourthPrice?: number
   public fifthPrice?: number
   public remark?: string | null
+  public status?: number //状态
 
   public readonly createdAt!: Date
   public readonly updatedAt!: Date
@@ -183,22 +198,36 @@ Goods.init(
       defaultValue: null,
       comment: '仓库ID',
     },
-    warehouseAreaId: {
+    warehouseZoneId: {
       type: DataTypes.INTEGER,
       allowNull: true,
       defaultValue: null,
       comment: '库区ID',
     },
-    warehouseLocationId: {
-      type: DataTypes.INTEGER,
-      allowNull: true,
-      defaultValue: null,
-      comment: '库位ID',
-    },
+    // warehouseLocationId: {
+    //   type: DataTypes.INTEGER,
+    //   allowNull: true,
+    //   defaultValue: null,
+    //   comment: '库位ID',
+    // },
     supplierIds: {
       type: DataTypes.STRING(100),
       allowNull: true,
       defaultValue: '',
+      field: 'supplier_ids',
+      get() {
+        const raw = (this as any).getDataValue('supplierIds')
+        return raw ? raw.split(',').map(Number) : []
+      },
+      set(val: any) {
+        if (Array.isArray(val)) {
+          (this as any).setDataValue('supplierIds', val.join(','))
+        } else if (typeof val === 'string') {
+          (this as any).setDataValue('supplierIds', val)
+        } else {
+          (this as any).setDataValue('supplierIds', '')
+        }
+      },
       comment: '供应商',
     },
     packagingUnit: {
@@ -207,13 +236,37 @@ Goods.init(
       defaultValue: null,
       comment: '包装单位',
     },
+    inner_unit: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      defaultValue: null,
+      comment: '内包装单位',
+    },
+    length: {
+      type: DataTypes.DECIMAL(10, 2),
+      allowNull: true,
+      defaultValue: null,
+      comment: '长度',
+    },
+    width: {
+      type: DataTypes.DECIMAL(10, 2),
+      allowNull: true,
+      defaultValue: null,
+      comment: '宽度',
+    },
+    height: {
+      type: DataTypes.DECIMAL(10, 2),
+      allowNull: true,
+      defaultValue: null,
+      comment: '高度',
+    },
     packagingSpec: {
       type: DataTypes.STRING(100),
       allowNull: true,
       defaultValue: '',
       comment: '包装规格',
     },
-    speceName: {
+    specName: {
       type: DataTypes.STRING(100),
       allowNull: true,
       defaultValue: '',
@@ -248,7 +301,7 @@ Goods.init(
       allowNull: true,
       comment: '栈板规格',
     },
-    warrantyPeriod: {
+    shelfLife: {
       type: DataTypes.INTEGER,
       allowNull: true,
       comment: '保质期',
@@ -383,6 +436,12 @@ Goods.init(
       type: DataTypes.TEXT,
       allowNull: true,
       comment: '备注',
+    },
+    status: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      defaultValue: 1,
+      comment: '状态',
     },
   },
   {

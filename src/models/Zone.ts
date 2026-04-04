@@ -1,9 +1,10 @@
 import { DataTypes, Model, Optional } from 'sequelize'
 import sequelize from '@/config/database'
 
-export interface WarehouseAreaTypeAttributes {
+export interface ZoneAttributes {
   id: number
   name: string
+  enName: string | null
   sort: number
   status: number
   remark?: string | null
@@ -11,20 +12,25 @@ export interface WarehouseAreaTypeAttributes {
   updatedAt?: Date
 }
 
-export interface WarehouseAreaTypeCreationAttributes extends Optional<
-  WarehouseAreaTypeAttributes,
-  'id' | 'name' | 'sort' | 'status' | 'remark' | 'createdAt' | 'updatedAt'
+export interface ZoneCreationAttributes extends Optional<
+  ZoneAttributes,
+  | 'id'
+  | 'name'
+  | 'enName'
+  | 'sort'
+  | 'status'
+  | 'remark'
+  | 'createdAt'
+  | 'updatedAt'
 > {}
 
-export class WarehouseAreaType
-  extends Model<
-    WarehouseAreaTypeAttributes,
-    WarehouseAreaTypeCreationAttributes
-  >
-  implements WarehouseAreaTypeAttributes
+export class Zone
+  extends Model<ZoneAttributes, ZoneCreationAttributes>
+  implements ZoneAttributes
 {
   public id!: number
   public name!: string
+  public enName!: string | null
   public sort!: number
   public status!: number
   public remark?: string | null
@@ -32,7 +38,7 @@ export class WarehouseAreaType
   public readonly updatedAt!: Date
 }
 
-WarehouseAreaType.init(
+Zone.init(
   {
     id: {
       type: DataTypes.INTEGER,
@@ -46,6 +52,11 @@ WarehouseAreaType.init(
       type: DataTypes.STRING(100),
       allowNull: false,
       comment: '库区类型名称',
+    },
+    enName: {
+      type: DataTypes.STRING(100),
+      allowNull: true,
+      comment: '库区类型英文名称',
     },
 
     sort: {
@@ -70,8 +81,8 @@ WarehouseAreaType.init(
   },
   {
     sequelize,
-    tableName: 'warehouse_area_type',
+    tableName: 'zone',
   },
 )
 
-export default WarehouseAreaType
+export default Zone

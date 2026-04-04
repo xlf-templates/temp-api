@@ -4,15 +4,18 @@ import sequelize from '@/config/database'
 export interface WarehouseLocationAttributes {
   id: number
   warehouseId: number
-  areaTypeId?: number
+  zoneId?: number
   locationCode: string
   name: string
-  shelfNo?: string | null
-  layerNo?: string | null
-  positionNo?: string | null
+  shelfNo?: number | null
+  layerNo?: number | null
+  positionNo?: number | null
   locationType?: number
   maxWeight?: number | null
   maxVolume?: number | null
+  length?: number | null
+  width?: number | null
+  height?: number | null
   sort?: number
   status?: number
   isDeleted?: number
@@ -32,6 +35,9 @@ export interface WarehouseLocationCreationAttributes extends Optional<
   | 'locationType'
   | 'maxWeight'
   | 'maxVolume'
+  | 'length'
+  | 'width'
+  | 'height'
   | 'sort'
   | 'status'
   | 'isDeleted'
@@ -51,15 +57,18 @@ export class WarehouseLocation
 {
   public id!: number
   public warehouseId!: number
-  public areaTypeId?: number
+  public zoneId?: number
   public locationCode!: string
   public name!: string
-  public shelfNo?: string | null
-  public layerNo?: string | null
-  public positionNo?: string | null
+  public shelfNo?: number | null
+  public layerNo?: number | null
+  public positionNo?: number | null
   public locationType?: number
   public maxWeight?: number | null
   public maxVolume?: number | null
+  public length?: number | null
+  public width?: number | null
+  public height?: number | null
   public sort?: number
   public status?: number
   public isDeleted?: number
@@ -72,16 +81,16 @@ export class WarehouseLocation
 
 WarehouseLocation.init(
   {
-    id: { type: DataTypes.BIGINT, primaryKey: true, autoIncrement: true },
+    id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
     warehouseId: {
       type: DataTypes.INTEGER,
       allowNull: false,
       comment: '仓库ID',
     },
-    areaTypeId: {
+    zoneId: {
       type: DataTypes.INTEGER,
       allowNull: true,
-      defaultValue:1,
+      defaultValue: 1,
       comment: '仓区类型',
     },
     locationCode: {
@@ -94,10 +103,10 @@ WarehouseLocation.init(
       allowNull: false,
       comment: '位置名称',
     },
-    shelfNo: { type: DataTypes.STRING(50), allowNull: true, comment: '货架号' },
-    layerNo: { type: DataTypes.STRING(20), allowNull: true, comment: '层号' },
+    shelfNo: { type: DataTypes.INTEGER, allowNull: true, comment: '货架号' },
+    layerNo: { type: DataTypes.INTEGER, allowNull: true, comment: '层号' },
     positionNo: {
-      type: DataTypes.STRING(20),
+      type: DataTypes.INTEGER,
       allowNull: true,
       comment: '位置号',
     },
@@ -117,6 +126,21 @@ WarehouseLocation.init(
       allowNull: true,
       comment: '最大体积',
     },
+    length: {
+      type: DataTypes.DECIMAL(10, 2),
+      allowNull: true,
+      comment: '长度',
+    },
+    width: {
+      type: DataTypes.DECIMAL(10, 2),
+      allowNull: true,
+      comment: '宽度',
+    },
+    height: {
+      type: DataTypes.DECIMAL(10, 2),
+      allowNull: true,
+      comment: '高度',
+    },
     sort: {
       type: DataTypes.INTEGER,
       allowNull: false,
@@ -135,10 +159,9 @@ WarehouseLocation.init(
       defaultValue: 0,
       comment: '是否删除',
     },
-    createdBy: { type: DataTypes.BIGINT, allowNull: true, comment: '创建人' },
-    updatedBy: { type: DataTypes.BIGINT, allowNull: true, comment: '更新人' },
+    createdBy: { type: DataTypes.INTEGER, allowNull: true, comment: '创建人' },
+    updatedBy: { type: DataTypes.INTEGER, allowNull: true, comment: '更新人' },
     remark: { type: DataTypes.TEXT, allowNull: true, comment: '备注' },
-    
   },
   {
     sequelize,

@@ -133,7 +133,7 @@ Warehouse.init(
       comment: '联系电话',
     },
     area: { type: DataTypes.DECIMAL(10, 2), allowNull: true, comment: '面积' },
-    managerId: { type: DataTypes.BIGINT, allowNull: true, comment: '负责人' },
+    managerId: { type: DataTypes.INTEGER, allowNull: true, comment: '负责人' },
     sort: {
       type: DataTypes.INTEGER,
       allowNull: false,
@@ -152,8 +152,8 @@ Warehouse.init(
       defaultValue: 0,
       comment: '是否删除',
     },
-    createdBy: { type: DataTypes.BIGINT, allowNull: true, comment: '创建人' },
-    updatedBy: { type: DataTypes.BIGINT, allowNull: true, comment: '更新人' },
+    createdBy: { type: DataTypes.INTEGER, allowNull: true, comment: '创建人' },
+    updatedBy: { type: DataTypes.INTEGER, allowNull: true, comment: '更新人' },
     remark: { type: DataTypes.TEXT, allowNull: true, comment: '备注' },
   },
   {

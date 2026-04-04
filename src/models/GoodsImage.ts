@@ -4,6 +4,8 @@ import { Op } from 'sequelize'
 
 export interface GoodsImageAttributes {
   id: number
+  name?: string | null
+  fileId?: string | null
   goodsId: number
   url: string
   isMain: number
@@ -15,7 +17,16 @@ export interface GoodsImageAttributes {
 
 export interface GoodsImageCreationAttributes extends Optional<
   GoodsImageAttributes,
-  'id' | 'sort' | 'remark' | 'createdAt' | 'updatedAt'
+  | 'id'
+  | 'goodsId'
+  | 'name'
+  | 'fileId'
+  | 'sort'
+  | 'remark'
+  | 'isMain'
+  | 'url'
+  | 'createdAt'
+  | 'updatedAt'
 > {}
 
 export class GoodsImage
@@ -23,6 +34,8 @@ export class GoodsImage
   implements GoodsImageAttributes
 {
   public id!: number
+  public name?: string | null
+  public fileId?: string | null
   public goodsId!: number
   public url!: string
   public isMain!: number
@@ -40,6 +53,16 @@ GoodsImage.init(
       allowNull: false,
       primaryKey: true,
       autoIncrement: true,
+    },
+    name: {
+      type: DataTypes.STRING(255),
+      allowNull: true,
+      comment: '图片名称',
+    },
+    fileId: {
+      type: DataTypes.STRING(255),
+      allowNull: true,
+      comment: '文件ID',
     },
     goodsId: {
       type: DataTypes.INTEGER,

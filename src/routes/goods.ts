@@ -3,6 +3,7 @@ import {
   listGoods,
   getGoods,
   createGoods,
+  bulkCreateGoods,
   updateGoods,
   deleteGoods,
 } from '@/controllers/goods'
@@ -15,6 +16,7 @@ router.use(authenticate)
 router.get('/', listGoods)
 router.get('/:id', getGoods)
 router.post('/', createGoods)
+router.post('/bulk', bulkCreateGoods)
 router.put('/:id', updateGoods)
 router.delete('/:id', deleteGoods)
 

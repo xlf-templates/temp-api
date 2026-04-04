@@ -1,7 +1,6 @@
 import { Request, Response } from 'express'
 import { GoodsImage, Goods } from '@/models'
 import { ok, fail } from '@/utils/response'
-import { Op } from 'sequelize'
 
 export const listGoodsImages = async (req: Request, res: Response) => {
   try {
@@ -16,7 +15,10 @@ export const listGoodsImages = async (req: Request, res: Response) => {
       where,
       limit: pageSize,
       offset,
-      order: [['sort', 'DESC'], ['id', 'ASC']],
+      order: [
+        ['sort', 'DESC'],
+        ['id', 'ASC'],
+      ],
     })
     return ok(res, '获取商品图片列表成功', {
       items: result.rows,
@@ -77,7 +79,10 @@ export const updateGoodsImage = async (req: Request, res: Response) => {
   }
 }
 
-export const deleteGoodsImage = async (req: Request, res: Response): Promise<void> => {
+export const deleteGoodsImage = async (
+  req: Request,
+  res: Response,
+): Promise<void> => {
   try {
     const id = Number(req.params.id)
     const count = await GoodsImage.destroy({ where: { id } })

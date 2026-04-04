@@ -15,6 +15,7 @@ import setupSwagger from '@/config/swagger'
 import routes from '@/routes'
 import { notFound, errorHandler } from '@/middleware/errorHandler'
 import { requestContext } from '@/utils/requestContext'
+import path from 'path'
 
 // 加载环境变量
 dotenv.config()
@@ -50,6 +51,7 @@ app.set('trust proxy', 1)
 app.use(
   cors({
     origin: NODE_ENV === 'production' ? [CORS_ORIGIN] : true, // 开发环境允许所有来源
+    // origin: true,
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
@@ -70,6 +72,9 @@ if (NODE_ENV === 'development') {
 app.use(express.json({ limit: '10mb' }))
 app.use(express.urlencoded({ extended: true, limit: '10mb' }))
 app.use(requestContext)
+
+// 配置文件静态访问
+app.use('/uploads', express.static(path.join(__dirname, '../uploads')))
 
 // 根路径
 app.get('/', (req, res) => {

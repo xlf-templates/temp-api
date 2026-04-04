@@ -6,11 +6,16 @@ import bcrypt from 'bcryptjs'
 export interface AdminAttributes {
   id: number
   username: string
+  realName?: string | null
   password: string
   initPassword: string
+  phone?: string | null
+  email?: string | null
   isUpdatePassword: number
   groupId: number | null
+  departmentId?: number | null // 新增部门ID关联
   avatar?: string
+  sex?: number | null
   status: number
   lastLoginAt?: Date
   createdAt?: Date
@@ -18,6 +23,7 @@ export interface AdminAttributes {
 }
 
 // 创建用户时的可选属性
+// 新增phone字段到创建属性接口
 export interface AdminCreationAttributes extends Optional<
   AdminAttributes,
   | 'id'
@@ -25,11 +31,15 @@ export interface AdminCreationAttributes extends Optional<
   | 'initPassword'
   | 'isUpdatePassword'
   | 'groupId'
+  | 'departmentId'
   | 'status'
   | 'lastLoginAt'
   | 'createdAt'
   | 'updatedAt'
-> {}
+> {
+  phone?: string | null
+  email?: string | null
+}
 
 // 用户模型类
 export class Admin
@@ -38,10 +48,16 @@ export class Admin
 {
   public id!: number
   public username!: string
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   public password!: string
+  public realName?: string | null
+  public sex?: number | null
+  public phone?: string | null
+  public email?: string | null
   public initPassword!: string
   public isUpdatePassword!: number
   public groupId!: number
+  public departmentId?: number | null
   public avatar?: string
   public status!: number
   public lastLoginAt?: Date
@@ -63,6 +79,7 @@ export class Admin
 
   // 实例方法：获取安全的用户信息（不包含密码）
   public toSafeJSON() {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { password, ...safeUser } = this.toJSON()
     return safeUser
   }
@@ -76,6 +93,11 @@ Admin.init(
       autoIncrement: true,
       primaryKey: true,
     },
+    email: {
+      type: DataTypes.STRING(50),
+      allowNull: true,
+      comment: '用户邮箱',
+    },
     username: {
       type: DataTypes.STRING(50),
       allowNull: false,
@@ -83,6 +105,11 @@ Admin.init(
         len: [3, 20],
         notEmpty: true,
       },
+    },
+    realName: {
+      type: DataTypes.STRING(50),
+      allowNull: true,
+      comment: '用户真实姓名',
     },
     password: {
       type: DataTypes.STRING(255),
@@ -92,6 +119,7 @@ Admin.init(
         notEmpty: true,
       },
     },
+
     initPassword: {
       type: DataTypes.STRING(255),
       allowNull: true,
@@ -106,6 +134,12 @@ Admin.init(
       allowNull: true,
       defaultValue: null,
     },
+    departmentId: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      defaultValue: null,
+      comment: '关联的部门ID',
+    },
     avatar: {
       type: DataTypes.STRING(255),
       allowNull: true,
@@ -114,6 +148,19 @@ Admin.init(
       type: DataTypes.INTEGER,
       allowNull: false,
       defaultValue: 1,
+    },
+    sex: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      comment: '用户性别,0:未知,1:男,2:女',
+      validate: {
+        isIn: [[0, 1, 2]],
+      },
+    },
+    phone: {
+      type: DataTypes.STRING(20),
+      allowNull: true,
+      comment: '用户手机号',
     },
     lastLoginAt: {
       type: DataTypes.DATE,

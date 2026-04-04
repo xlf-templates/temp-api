@@ -1,9 +1,9 @@
 import { Request, Response } from 'express'
-import { WarehouseAreaType } from '@/models'
+import { Zone } from '@/models'
 import { ok, fail } from '@/utils/response'
 import { Op } from 'sequelize'
 
-export const listWarehouseAreaTypes = async (req: Request, res: Response) => {
+export const listZones = async (req: Request, res: Response) => {
   try {
     const page = Number(req.query.page) || 1
     const pageSize = Number(req.query.pageSize) || 10
@@ -11,6 +11,7 @@ export const listWarehouseAreaTypes = async (req: Request, res: Response) => {
 
     const where: any = {}
     if (req.query.name) where.name = { [Op.like]: `%${req.query.name}%` }
+    if (req.query.enName) where.enName = { [Op.like]: `%${req.query.enName}%` }
     if (req.query.status) {
       const arr = Array.isArray(req.query.status)
         ? req.query.status.map((item: any) => Number(item))
@@ -18,7 +19,7 @@ export const listWarehouseAreaTypes = async (req: Request, res: Response) => {
       where.status = { [Op.in]: arr }
     }
 
-    const result = await WarehouseAreaType.findAndCountAll({
+    const result = await Zone.findAndCountAll({
       where,
       limit: pageSize,
       offset,
@@ -38,10 +39,10 @@ export const listWarehouseAreaTypes = async (req: Request, res: Response) => {
   }
 }
 
-export const getWarehouseAreaType = async (req: Request, res: Response) => {
+export const getZone = async (req: Request, res: Response) => {
   try {
     const id = Number(req.params.id)
-    const item = await WarehouseAreaType.findByPk(id)
+    const item = await Zone.findByPk(id)
     if (!item) return fail(res, '仓库区域类型不存在', 404)
     return ok(res, '获取仓库区域类型成功', item)
   } catch (error: any) {
@@ -49,19 +50,19 @@ export const getWarehouseAreaType = async (req: Request, res: Response) => {
   }
 }
 
-export const createWarehouseAreaType = async (req: Request, res: Response) => {
+export const createZone = async (req: Request, res: Response) => {
   try {
-    const item = await WarehouseAreaType.create(req.body)
+    const item = await Zone.create(req.body)
     return ok(res, '创建仓库区域类型成功', item, 201)
   } catch (error: any) {
     return fail(res, error.message, 400)
   }
 }
 
-export const updateWarehouseAreaType = async (req: Request, res: Response) => {
+export const updateZone = async (req: Request, res: Response) => {
   try {
     const id = Number(req.params.id)
-    const item = await WarehouseAreaType.findByPk(id)
+    const item = await Zone.findByPk(id)
     if (!item) return fail(res, '仓库区域类型不存在', 404)
     await item.update(req.body)
     return ok(res, '更新仓库区域类型成功', item)
@@ -70,7 +71,7 @@ export const updateWarehouseAreaType = async (req: Request, res: Response) => {
   }
 }
 
-export const deleteWarehouseAreaType = async (
+export const deleteZone = async (
   req: Request,
   res: Response,
 ): Promise<void> => {
@@ -84,7 +85,7 @@ export const deleteWarehouseAreaType = async (
       res.status(400).json({ success: false, message: '缺少有效的 id 或 ids' })
       return
     }
-    const count = await WarehouseAreaType.destroy({
+    const count = await Zone.destroy({
       where: { id: { [Op.in]: ids } },
     })
     if (!count) {
